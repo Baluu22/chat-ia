@@ -31,7 +31,7 @@ if (req.method !== "POST") {
     }
     // Llamada a la API de Gemini para generar contenido basado en el mensaje recibido
     const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
+      model: "gemini-flash-lite-latest",
       config: {
         systemInstruction: `
           Sos un experto en Redacciones de emails.
