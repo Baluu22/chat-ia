@@ -28,7 +28,7 @@ function addMessage(text, sender) {
 async function sendMessage(message) {
 
     try {
-        //cambiar el localhost por la ruta alternativa para que funcione en producción
+        // Cambiar localhost por la ruta relativa para que funcione en producción
         const response = await fetch(
             "/api/chat",
             {
