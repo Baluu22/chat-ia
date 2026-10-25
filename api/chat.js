@@ -7,12 +7,19 @@ const ai = new GoogleGenAI({
 // Exportación de la función que maneja las solicitudes HTTP
 module.exports = async (req, res) => {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({
-        success: false,
-        message: "Método no permitido"
-      });
-    }
+    if (req.method === "GET") {
+  return res.status(200).json({
+    success: true,
+    message: "API de chat funcionando en Vercel"
+  });
+}
+
+if (req.method !== "POST") {
+  return res.status(405).json({
+    success: false,
+    message: "Método no permitido"
+  });
+}
 
     const { message } = req.body;
 
