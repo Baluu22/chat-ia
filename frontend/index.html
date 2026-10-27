@@ -1,85 +1,391 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat IA</title>
+    <title>MailCraft AI — Asistente de Escritura de Emails</title>
+    <meta name="description" content="Asistente de inteligencia artificial para redactar, mejorar y perfeccionar emails profesionales.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div class="app">
+    <div class="app" id="app">
 
-        <aside class="sidebar">
-            <h2>✦ Chat IA</h2>
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <svg class="brand-icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <rect width="28" height="28" rx="8" fill="url(#brandGrad)"/>
+                    <path d="M7 10L14 6L21 10V18L14 22L7 18V10Z" stroke="white" stroke-width="1.5" fill="none"/>
+                    <path d="M7 10L14 14M14 14L21 10M14 14V22" stroke="white" stroke-width="1.5"/>
+                    <defs>
+                        <linearGradient id="brandGrad" x1="0" y1="0" x2="28" y2="28">
+                            <stop stop-color="#6366f1"/>
+                            <stop offset="1" stop-color="#8b5cf6"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="brand-name">MailCraft <span class="brand-ai">AI</span></span>
+            </div>
 
-            <button id="new-chat" class="new-chat">
-                + Nuevo chat
+            <button id="new-email-btn" class="btn-new-email">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                Nuevo Email
             </button>
 
-            <p class="sidebar-label">Tus conversaciones</p>
-
-            <div id="chat-history"></div>
+            <nav class="sidebar-nav">
+                <p class="sidebar-section-label">Acciones rápidas</p>
+                <button class="sidebar-action" data-action="redactar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                    </svg>
+                    Redactar desde cero
+                </button>
+                <button class="sidebar-action" data-action="mejorar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/>
+                        <path d="m14 7 3 3"/>
+                    </svg>
+                    Mejorar email existente
+                </button>
+                <button class="sidebar-action" data-action="corregir">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    Corregir gramática
+                </button>
+                <button class="sidebar-action" data-action="traducir">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m5 8 6 6"/>
+                        <path d="m4 14 6-6 2-3"/>
+                        <path d="M2 5h12"/>
+                        <path d="M7 2h1"/>
+                        <path d="m22 22-5-10-5 10"/>
+                        <path d="M14 18h6"/>
+                    </svg>
+                    Traducir email
+                </button>
+            </nav>
 
             <div class="sidebar-footer">
-                Proyecto de aprendizaje
+                <div class="sidebar-footer-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                    Powered by Gemini AI
+                </div>
             </div>
         </aside>
 
-        <main class="chat">
+        <!-- ===== MAIN WORKSPACE ===== -->
+        <main class="workspace">
 
-            <header class="chat-header">
-                <div class="avatar">✦</div>
-
-                <div>
-                    <h1>Asistente IA</h1>
-                    <span class="status">Tu asistente personal</span>
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button class="topbar-menu-btn" id="menu-toggle" aria-label="Abrir menú">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" x2="20" y1="12" y2="12"/>
+                        <line x1="4" x2="20" y1="6" y2="6"/>
+                        <line x1="4" x2="20" y1="18" y2="18"/>
+                    </svg>
+                </button>
+                <div class="topbar-title">
+                    <h1>Asistente de Escritura de Emails</h1>
+                    <span class="topbar-subtitle">Redactá, mejorá y perfeccioná tus emails con IA</span>
                 </div>
+                <button class="topbar-help-btn" id="help-btn" aria-label="Ayuda" title="Ayuda y atajos">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <path d="M12 17h.01"/>
+                    </svg>
+                </button>
             </header>
 
-            <section
-                id="messages"
-                class="messages"
-                aria-live="polite"
-                aria-label="Conversación"
-            >
-                <div class="welcome">
-                    <div class="welcome-icon">✦</div>
+            <!-- Split Panels -->
+            <div class="panels">
 
-                    <h2>¿En qué puedo ayudarte?</h2>
+                <!-- LEFT PANEL: Composition -->
+                <section class="panel panel-compose" id="panel-compose">
+                    <div class="panel-header">
+                        <h2 class="panel-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                            </svg>
+                            Composición
+                        </h2>
+                    </div>
 
-                    <p>
-                        Escribí tu pregunta y comencemos
-                        una conversación.
-                    </p>
-                </div>
-            </section>
+                    <div class="panel-body">
+                        <form id="email-form" class="email-form" autocomplete="off">
 
-            <form id="chat-form" class="chat-form">
-                <label class="sr-only" for="message-input">
-                    Escribí tu mensaje
-                </label>
+                            <!-- Recipient (Optional) -->
+                            <div class="form-group">
+                                <label for="email-recipient" class="form-label">
+                                    Destinatario
+                                    <span class="form-label-optional">(opcional)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="email-recipient"
+                                    class="form-input"
+                                    placeholder="ej. jefe de departamento, cliente, profesor..."
+                                >
+                            </div>
 
-                <input
-                    type="text"
-                    id="message-input"
-                    placeholder="Escribí un mensaje..."
-                    autocomplete="off"
-                    required
-                >
+                            <!-- Subject -->
+                            <div class="form-group">
+                                <label for="email-subject" class="form-label">
+                                    Asunto del email
+                                    <span class="form-label-optional">(opcional)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="email-subject"
+                                    class="form-input"
+                                    placeholder="ej. Solicitud de reunión, Seguimiento de proyecto..."
+                                >
+                            </div>
 
-                <button type="submit" id="send-button">
-                    Enviar
-                </button>
-            </form>
+                            <!-- Context / Purpose -->
+                            <div class="form-group">
+                                <label for="email-context" class="form-label">
+                                    ¿Qué querés comunicar?
+                                </label>
+                                <textarea
+                                    id="email-context"
+                                    class="form-textarea form-textarea-sm"
+                                    placeholder="Describí brevemente el propósito del email. Ej: Necesito pedir una extensión para la entrega del proyecto final..."
+                                    rows="3"
+                                ></textarea>
+                            </div>
 
-            <p class="disclaimer">
-                La IA puede cometer errores. Verificá la información.
-            </p>
+                            <!-- Draft / Existing Email -->
+                            <div class="form-group form-group-grow">
+                                <label for="email-draft" class="form-label">
+                                    Borrador o email existente
+                                    <span class="form-label-optional">(opcional)</span>
+                                </label>
+                                <textarea
+                                    id="email-draft"
+                                    class="form-textarea form-textarea-lg"
+                                    placeholder="Pegá aquí tu email actual para mejorarlo, o dejá este campo vacío para generar uno nuevo..."
+                                    rows="6"
+                                ></textarea>
+                            </div>
+
+                            <!-- Tone & Language row -->
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label for="email-tone" class="form-label">Tono</label>
+                                    <div class="select-wrapper">
+                                        <select id="email-tone" class="form-select">
+                                            <option value="profesional">Profesional</option>
+                                            <option value="formal">Formal</option>
+                                            <option value="amigable">Amigable</option>
+                                            <option value="persuasivo">Persuasivo</option>
+                                            <option value="cortés">Cortés</option>
+                                            <option value="conciso">Conciso</option>
+                                        </select>
+                                        <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m6 9 6 6 6-6"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="email-language" class="form-label">Idioma</label>
+                                    <div class="select-wrapper">
+                                        <select id="email-language" class="form-select">
+                                            <option value="español">Español</option>
+                                            <option value="inglés">Inglés</option>
+                                            <option value="portugués">Portugués</option>
+                                            <option value="francés">Francés</option>
+                                            <option value="alemán">Alemán</option>
+                                            <option value="italiano">Italiano</option>
+                                        </select>
+                                        <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m6 9 6 6 6-6"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="form-actions">
+                                <button type="submit" id="btn-generate" class="btn btn-primary">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/>
+                                        <path d="m14 7 3 3"/>
+                                    </svg>
+                                    <span id="btn-generate-text">Generar Email</span>
+                                </button>
+
+                                <div class="secondary-actions">
+                                    <button type="button" class="btn btn-secondary" data-action="reescribir" title="Reescribir completamente">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                                            <path d="M21 3v5h-5"/>
+                                        </svg>
+                                        Reescribir
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-action="acortar" title="Hacer más breve">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15V6"/>
+                                            <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+                                            <path d="M12 12H3"/>
+                                            <path d="M16 6H3"/>
+                                            <path d="M12 18H3"/>
+                                        </svg>
+                                        Acortar
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-action="profesionalizar" title="Hacer más profesional">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                                        </svg>
+                                        Profesionalizar
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-action="corregir_gramatica" title="Corregir errores gramaticales">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                                            <path d="m9 12 2 2 4-4"/>
+                                        </svg>
+                                        Gramática
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </section>
+
+                <!-- RIGHT PANEL: AI Result -->
+                <section class="panel panel-result" id="panel-result">
+                    <div class="panel-header">
+                        <h2 class="panel-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                            </svg>
+                            Resultado de la IA
+                        </h2>
+                        <div class="panel-header-actions" id="result-actions" style="display: none;">
+                            <button class="btn-icon" id="btn-copy" title="Copiar al portapapeles" aria-label="Copiar email">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                            </button>
+                            <button class="btn-icon" id="btn-regenerate" title="Regenerar email" aria-label="Regenerar">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                                    <path d="M21 3v5h-5"/>
+                                </svg>
+                            </button>
+                            <button class="btn-icon" id="btn-use-as-draft" title="Usar como borrador" aria-label="Usar como borrador">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+                                    <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                                    <path d="M10 13h4"/>
+                                    <path d="M10 17h4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel-body" id="result-body">
+                        <!-- Empty State -->
+                        <div class="empty-state" id="empty-state">
+                            <div class="empty-state-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="16" x="2" y="4" rx="2"/>
+                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                </svg>
+                            </div>
+                            <h3>Tu email mejorado aparecerá aquí</h3>
+                            <p>Completá los campos de la izquierda y hacé clic en <strong>"Generar Email"</strong> para que la IA te ayude a crear o mejorar tu email.</p>
+                            <div class="empty-state-tips">
+                                <div class="tip">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                    </svg>
+                                    Describí qué querés comunicar
+                                </div>
+                                <div class="tip">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                    </svg>
+                                    Elegí el tono y el idioma
+                                </div>
+                                <div class="tip">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                    </svg>
+                                    Hacé clic en "Generar Email"
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div class="loading-state" id="loading-state" style="display: none;">
+                            <div class="loading-spinner">
+                                <div class="spinner"></div>
+                            </div>
+                            <h3>Generando tu email...</h3>
+                            <p>La IA está trabajando en la mejor versión de tu email.</p>
+                        </div>
+
+                        <!-- Result Content -->
+                        <div class="result-content" id="result-content" style="display: none;">
+                            <div class="result-email" id="result-email" contenteditable="true" spellcheck="true"></div>
+                        </div>
+
+                        <!-- Error State -->
+                        <div class="error-state" id="error-state" style="display: none;">
+                            <div class="error-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" x2="12" y1="8" y2="12"/>
+                                    <line x1="12" x2="12.01" y1="16" y2="16"/>
+                                </svg>
+                            </div>
+                            <h3>No se pudo generar el email</h3>
+                            <p id="error-message">Hubo un problema al conectar con el servidor. Intentá de nuevo.</p>
+                            <button class="btn btn-secondary" id="btn-retry">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                                    <path d="M21 3v5h-5"/>
+                                </svg>
+                                Intentar de nuevo
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Toast Notification -->
+                    <div class="toast" id="toast" aria-live="assertive">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        <span id="toast-message">Email copiado al portapapeles</span>
+                    </div>
+                </section>
+
+            </div><!-- /panels -->
 
         </main>
+
+        <!-- Sidebar overlay for mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     </div>
 
     <script src="js/app.js"></script>
